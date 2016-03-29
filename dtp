@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+Dir.chdir __dir__
+require 'rubygems'
+require 'bundler/setup'
+
+# Opens a new DTP pull request
+# To use: dtp
+
+require 'dotenv'
+Dotenv.load
+
+require 'octokit'
+
+`./message_dev_of_day "%s it's DTP time!"`
+token = ENV['GITHUB_TOKEN']
+client = Octokit::Client.new(:access_token => token)
+#client.create_pull_request('code-dot-org/code-dot-org', 'production', 'test', 'DTP', 'Deploy to Production')

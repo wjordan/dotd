@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+Dir.chdir __dir__
+require 'rubygems'
+require 'bundler/setup'
+
+# Opens a new DTT pull request
+# To use: dtt
+
+require 'dotenv'
+Dotenv.load
+
+require 'octokit'
+
+token = ENV['GITHUB_TOKEN']
+client = Octokit::Client.new(:access_token => token)
+`./message_dev_of_day "%s it's DTT time!"`
+#client.create_pull_request('code-dot-org/code-dot-org', 'test', 'staging', 'DTT', 'Deploy to Test')

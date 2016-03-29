@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+Dir.chdir __dir__
+require 'rubygems'
+require 'bundler/setup'
+require 'dotenv'
+Dotenv.load
+
+# Get the full name and email of the Dev of the Day from the PagerDuty API.
+# To use: ./dev_of_day
+
+require 'active_support'
+require 'active_support/core_ext'
+
+require 'httparty'
+
+DEV_OF_DAY_SCHEDULE = 'PPQ1NPZ'
+PAGERDUTY_TOKEN = ENV['PAGERDUTY_TOKEN'] || raise('PAGERDUTY_TOKEN required')
+PAGERDUTY_API = 'https://codeorg.pagerduty.com/api/v1'
+
+url = "#{PAGERDUTY_API}/schedules/#{DEV_OF_DAY_SCHEDULE}/users"
+
+now = Time.now
+future = now + 1.minutes
+dev_of_day = HTTParty.get(url, query: {since: now.iso8601, 'until' => future.iso8601}, headers: {'Authorization' => "Token token=#{PAGERDUTY_TOKEN}"})['users'].first
+puts dev_of_day.slice('name', 'email').to_json

@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+Dir.chdir __dir__
+require 'rubygems'
+require 'bundler/setup'
+require 'dotenv'
+Dotenv.load
+
+# Get the Hipchat mention-name of the Dev of the Day.
+# To use: ./dev_of_day_hipchat
+
+require 'hipchat'
+
+HIPCHAT_TOKEN = ENV['HIPCHAT_TOKEN'] || raise('HIPCHAT_TOKEN required')
+
+dev_of_day = JSON.parse(`./dev_of_day`)
+hipchat = HipChat::Client.new(HIPCHAT_TOKEN, :api_version => 'v2')
+
+begin
+  dev = hipchat.user(dev_of_day['email']).view
+rescue
+  # Find by matching name if email doesn't match
+  dev = hipchat.users.find{|user| user.name == dev_of_day['name']}
+end
+puts dev.mention_name

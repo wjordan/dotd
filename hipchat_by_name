@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+Dir.chdir __dir__
+require 'rubygems'
+require 'bundler/setup'
+require 'dotenv'
+Dotenv.load
+
+# Find the HipChat mention_name by user's full name.
+# To use: ./hipchat_by_name "Will Jordan"
+
+require 'hipchat'
+
+HIPCHAT_TOKEN = ENV['HIPCHAT_TOKEN'] || raise('HIPCHAT_TOKEN required')
+
+hipchat = HipChat::Client.new(HIPCHAT_TOKEN, :api_version => 'v2')
+dev_name = hipchat.users.select{|user| user.name == ARGV[0]}.first.view
+puts dev_name.mention_name

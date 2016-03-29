@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+Dir.chdir __dir__
+require 'rubygems'
+require 'bundler/setup'
+require 'dotenv'
+Dotenv.load
+
+# Update the current dev of the day in HipChat developer room.
+# To use: ./update_dev_of_day
+
+mention_name = `./dev_of_day_hipchat`.chomp
+
+require 'hipchat'
+
+HIPCHAT_TOKEN = ENV['HIPCHAT_TOKEN'] || raise('HIPCHAT_TOKEN required')
+hipchat = HipChat::Client.new(HIPCHAT_TOKEN, :api_version => 'v2')
+
+topic = hipchat['Developers'].get_room['topic']
+new_topic = topic.gsub(/(?<= )[^\s]*(?= is dev of the day)/, "@#{mention_name}")
+unless topic == new_topic
+  hipchat['Developers'].topic(new_topic)
+  puts 'Dev of day topic updated'
+end
